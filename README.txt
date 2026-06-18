@@ -1,1 +1,1 @@
-Metallurgical Automator is an automation script to auto-fill the reporting of the test data at the lab.
+The Metallurgical Automator was developed across different machines and due to inconsistant commit names, rebase was used to bring all into one final commit that was called initial commit as it was it became the first commit.
