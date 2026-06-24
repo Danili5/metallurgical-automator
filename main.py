@@ -45,7 +45,28 @@ class Main(FileSystemEventHandler):
             return
 
         try:
-            print(test_results_file, test_meta_file, flush = True)
+            for row in template_form.tables[1].rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:        
+                        for key, value in data.items():
+                            if key in paragraph.text:
+                                try:
+                                    value = f"{int(value):,}"
+                                except Exception:
+                                    print(Exception)
+
+                                new_text = paragraph.text.replace(key, value)
+                                paragraph.text = ""
+                                paragraph.text = new_text
+
+                                for run in paragraph.runs:
+                                    run.font.name = "Bookman Old Style"
+                                    run.font.size = Pt(10)
+
+                        if "+" in paragraph.text:
+                            paragraph.text = ""
+
+            template_form.save(str(Path(REPORT_PATH) / report_title))
         except PermissionError:
             print("Permission Error retrying again", flush = True)
         except Exception:
