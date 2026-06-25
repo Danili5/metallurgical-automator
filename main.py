@@ -18,9 +18,7 @@ REPORTS = os.getenv("REPORTS")
 class Main(FileSystemEventHandler):
     def on_created(self, event):    
         """set up"""
-        # setup data file
-        # setup template file
-
+        
         # writes into the template file from the data file
         # for row in template_form.tables[1].rows:
         #         for cell in row.cells:
