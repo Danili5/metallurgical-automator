@@ -1,1 +1,0 @@
-The Metallurgical Automator was developed across different machines (work & home) and to keep it clean all past commits were made into a single commit using rebase that commit was called initial commit as it became the first commit.
