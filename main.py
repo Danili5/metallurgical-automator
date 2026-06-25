@@ -12,13 +12,14 @@ from watchdog.events import FileSystemEventHandler
 
 load_dotenv()
 
+# requires a .env
 DATA = os.getenv("DATA")
 REPORTS = os.getenv("REPORTS")
 
 class Main(FileSystemEventHandler):
     def on_created(self, event):    
         """set up"""
-        
+
         # writes into the template file from the data file
         # for row in template_form.tables[1].rows:
         #         for cell in row.cells:
