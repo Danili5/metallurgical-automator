@@ -18,7 +18,7 @@ logging.basicConfig(
 
 class Main(FileSystemEventHandler):
     def on_created(self, event): 
-        time.sleep(0.5)
+        time.sleep(1)
         logging.info(f"The following was created:\n> {event.src_path}")
         
         for report in Path(REPORTS_DIRECTORY).rglob("*.docx"):
@@ -33,13 +33,20 @@ class Main(FileSystemEventHandler):
                             for paragraph in cell.paragraphs:        
                                 for key, value in data.items():
                                     if key in paragraph.text:
-                                        try:
-                                            if "." not in value:
-                                                value = f"{int(value):,}"
-                                        except Exception:
-                                            print(Exception)
+                                        if "stress" in key.lower():
+                                            value = int(value)
 
-                                        new_text = paragraph.text.replace(key, str(value))
+                                            if value < 500000:
+                                                value = int(round(value / 100) * 100)
+                                            elif value == 500000 or value < 1000000:
+                                                value = int(round(value / 500) * 100)
+                                            else:
+                                                value = int(round(value / 1000) * 100)
+
+                                        if "elongation" in key or "reducation" in key:
+                                            value = round(int(value))
+                                            
+                                        new_text = paragraph.text.replace(key, f"{value:,}")
                                         paragraph.text = ""
                                         paragraph.text = new_text
 
