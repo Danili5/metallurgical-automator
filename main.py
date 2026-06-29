@@ -18,7 +18,7 @@ logging.basicConfig(
 
 class Main(FileSystemEventHandler):
     def on_created(self, event): 
-        time.sleep(1)
+        time.sleep(2)
         logging.info(f"{Path(event.src_path).name} was created")
         
         if Path(event.src_path).suffix == ".csv":
@@ -26,7 +26,6 @@ class Main(FileSystemEventHandler):
                 if Path(report).stem.lower().replace(" ", "") == Path(event.src_path).stem.lower().replace(" ", ""):
                     try:
                         template = Document(report)
-
                         data = {f"+{key} {sub_key}+": sub_value for key, value in pd.read_csv(Path(event.src_path), skiprows = [0,2], index_col = 0).to_dict().items() for sub_key, sub_value in value.items()}
 
                         for row in template.tables[1].rows:
