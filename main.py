@@ -22,11 +22,23 @@ class Main(FileSystemEventHandler):
         logging.info(f"{Path(event.src_path).name} was created")
         
         if Path(event.src_path).suffix == ".csv":
+            data_file = Path(event.src_path)
+            new_data_file = None
+
+            print(data_file, flush = True)
+
+            if '_1' in data_file.name:
+                stem = data_file.stem.replace('_1', '')
+                extension = data_file.suffix
+                base = data_file.parent
+
+                new_data_file = data_file.rename(base / f'{stem}{extension}')
+
             for report in Path(REPORTS_DIRECTORY).rglob("*.docx"):
-                if Path(report).stem.lower().replace(" ", "") == Path(event.src_path).stem.lower().replace(" ", ""):
+                if Path(report).stem.lower().replace(" ", "") == new_data_file.stem.lower().replace(" ", ""):
                     try:
                         template = Document(report)
-                        data = {f"+{key} {sub_key}+": sub_value for key, value in pd.read_csv(Path(event.src_path), skiprows = [0,2], index_col = 0).to_dict().items() for sub_key, sub_value in value.items()}
+                        data = {f"+{key} {sub_key}+": sub_value for key, value in pd.read_csv(new_data_file, skiprows = [0,2], index_col = 0).to_dict().items() for sub_key, sub_value in value.items()}
 
                         for row in template.tables[1].rows:
                             for cell in row.cells:
