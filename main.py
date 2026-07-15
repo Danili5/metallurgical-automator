@@ -10,27 +10,59 @@ from dotenv import load_dotenv
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="> %(message)s at %(asctime)s.",
-    datefmt="%H:%M:%S"
-)
+logging.basicConfig(level=logging.INFO, format="> %(message)s at %(asctime)s.", datefmt="%H:%M:%S")
 
 class Main(FileSystemEventHandler):
     def on_created(self, event): 
         path = Path(event.src_path)
-
-        # guards to ensure the right data comes through
         is_file = path.is_file()
         is_csv = path.suffix == '.csv'
         is_primary = '_2' not in path.stem
 
-        if is_file and is_csv and is_primary and self._check(path):
-            logging.info(pd.read_csv(path, skiprows=[0,2], index_col=0))
+        if is_file and is_csv and is_primary and self._is_file_loaded(path):
+            handled_data = self._data_handling(pd.read_csv(path, skiprows=[0,2], index_col=0))
 
-    # a method to verify that the csv data file is loaded before reading it.
-    def _check(self, data_file, max_attemps = 20):
+    def _data_handling(self, data):    
+        key_map = {
+            'Initial area at Area reduction': '+AREA',
+            'Area': '+AREA',
+            'Force at Yield (Offset 0.2 %)': '+YIELD',
+            'Tensile stress at Yield (Offset 0.2 %)': '+S2',
+            'Tensile stress at Maximum Force': '+S1',
+            'Maximum Force': '+ULT',
+            'Elongation after fracture': '+E',
+            'Reduction of area at Area reduction': '+RA'
+        }
+
+        data = data.rename(columns=key_map)
+        placeholders = set(key_map.values())
+        valid_columns = [column for column in data.columns if column in placeholders]
+        data = data[valid_columns]
+        data = data.to_dict()
+        processed_data = dict()
+
+        for key, value in data.items():
+            for sub_key, sub_value in value.items():
+                    if key in ['+S1', '+S2']:
+                        if sub_value < 50000:
+                            sub_value = round(sub_value/100) * 100
+                        elif sub_value < 100000:
+                            sub_value = round(sub_value/500) * 500
+                        else:
+                            sub_value = round(sub_value/1000) * 1000
+
+                        processed_data[f'{key} {sub_key}+'] = f'{sub_value:,}'
+
+                    elif key in ['+E', '+RA']:
+                        processed_data[f'{key} {sub_key}+'] = round(sub_value)
+                    else:
+                        processed_data[f'{key} {sub_key}+'] = f'{sub_value:,}'
+                        
+        return processed_data
+
+    def _is_file_loaded(self, data_file, max_attemps = 20):
         attempts = 0
+
         while attempts < max_attemps:
             try:
                 with open(data_file, 'r+'):
