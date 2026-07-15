@@ -25,7 +25,9 @@ class Main(FileSystemEventHandler):
             if self._check(data_file) == 0:
                 return
 
-            logging.info(pd.read_csv(data_file))
+            data = pd.read_csv(data_file, skiprows=[0,2], index_col=0)
+
+            logging.info(data)
 
     def _check(self, data_file, max_attemps = 20):
         attempts = 0
@@ -39,69 +41,6 @@ class Main(FileSystemEventHandler):
                 time.sleep(0.5)
 
         return 0
-        
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # time.sleep(1)
-        # logging.info(f"{Path(event.src_path).name} was created")
-        
-        # if Path(event.src_path).suffix == ".csv":
-        #     for report in Path(REPORTS_DIRECTORY).rglob("*.docx"):
-        #         if Path(report).stem.lower().replace(" ", "") == Path(event.src_path).stem.lower().replace(" ", ""):
-        #             try:
-        #                 template = Document(report)
-
-        #                 data = {f"+{key} {sub_key}+": sub_value for key, value in pd.read_csv(Path(event.src_path), skiprows = [0,2], index_col = 0).to_dict().items() for sub_key, sub_value in value.items()}
-
-        #                 for row in template.tables[1].rows:
-        #                     for cell in row.cells:
-        #                         for paragraph in cell.paragraphs:        
-        #                             for key, value in data.items():
-        #                                 if key in paragraph.text:
-        #                                     if "stress" in key.lower():
-        #                                         value = int(value)
-
-        #                                         if value < 500000:
-        #                                             value = int(round(value / 100) * 100)
-        #                                         elif value == 500000 or value < 1000000:
-        #                                             value = int(round(value / 500) * 100)
-        #                                         else:
-        #                                             value = int(round(value / 1000) * 100)
-
-        #                                     if "elongation" in key or "reducation" in key:
-        #                                         value = round(int(value))
-                                                
-        #                                     new_text = paragraph.text.replace(key, f"{value:,}")
-        #                                     paragraph.text = ""
-        #                                     paragraph.text = new_text
-
-        #                                     for run in paragraph.runs:
-        #                                         run.font.name = "Bookman Old Style"
-        #                                         run.font.size = Pt(10)
-
-        #                             if "+" in paragraph.text:
-        #                                 paragraph.text = ""
-
-        #                 template.save(report)
-        #             except PermissionError:
-        #                 logging.info("permission error, still running the program observation")
 
 if __name__ == "__main__":    
     load_dotenv()
