@@ -33,18 +33,20 @@ class Main(FileSystemEventHandler):
         try:
             report = Document(Path(REPORTS_DIRECTORY) / name)
 
-            for row in report.tables[1].rows:
-                for cell in row.cells:
-                    for key, value in processed_data.items():
-                        if cell.text == key:
-                            cell.text = str(value)
-                    
-                    if '+' in cell.text and cell.text:
-                        cell.text = ''
+            for table in report.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            text = paragraph.text.strip()
+
+                            if text in processed_data:
+                                paragraph.text = str(processed_data[text])
+                            elif '+' in text:
+                                paragraph.text = ''
 
             report.save(Path(REPORTS_DIRECTORY) / name)
             print('saved', flush=True)
-        except (FileNotFoundError, UnicodeDecodeError):
+        except Exception:
             pass
 
     def _processing(self, data):    
