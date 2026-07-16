@@ -23,8 +23,6 @@ class Main(FileSystemEventHandler):
             self._reporting(path.stem, self._processing(pd.read_csv(path, skiprows=[0,2], index_col=0)))
 
     def _reporting(self, name, processed_data):
-        # print(processed_data, type(processed_data), flush=True)
-
         if '_1' in name:
             name = f'{name.split("_1")[0]}.docx'
         else:
