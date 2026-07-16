@@ -20,9 +20,34 @@ class Main(FileSystemEventHandler):
         is_primary = '_2' not in path.stem
 
         if is_file and is_csv and is_primary and self._is_file_loaded(path):
-            handled_data = self._data_handling(pd.read_csv(path, skiprows=[0,2], index_col=0))
+            self._reporting(path.stem, self._processing(pd.read_csv(path, skiprows=[0,2], index_col=0)))
 
-    def _data_handling(self, data):    
+    def _reporting(self, name, processed_data):
+        # print(processed_data, type(processed_data), flush=True)
+
+        if '_1' in name:
+            name = f'{name.split("_1")[0]}.docx'
+        else:
+            name = f'{name}.docx'
+
+        try:
+            report = Document(Path(REPORTS_DIRECTORY) / name)
+
+            for row in report.tables[1].rows:
+                for cell in row.cells:
+                    for key, value in processed_data.items():
+                        if cell.text == key:
+                            cell.text = str(value)
+                    
+                    if '+' in cell.text and cell.text:
+                        cell.text = ''
+
+            report.save(Path(REPORTS_DIRECTORY) / name)
+            print('saved', flush=True)
+        except (FileNotFoundError, UnicodeDecodeError):
+            pass
+
+    def _processing(self, data):    
         key_map = {
             'Initial area at Area reduction': '+AREA',
             'Area': '+AREA',
@@ -51,13 +76,13 @@ class Main(FileSystemEventHandler):
                         else:
                             sub_value = round(sub_value/1000) * 1000
 
-                        processed_data[f'{key} {sub_key}+'] = f'{sub_value:,}'
+                        processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
 
                     elif key in ['+E', '+RA']:
-                        processed_data[f'{key} {sub_key}+'] = round(sub_value)
+                        processed_data[f'{key}{sub_key}+'] = round(sub_value)
                     else:
-                        processed_data[f'{key} {sub_key}+'] = f'{sub_value:,}'
-                        
+                        processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
+
         return processed_data
 
     def _is_file_loaded(self, data_file, max_attemps = 20):
