@@ -43,7 +43,7 @@ class Main(FileSystemEventHandler):
                                 paragraph.text = ''
 
             report.save(Path(REPORTS_DIRECTORY) / name)
-            print('saved', flush=True)
+            logging.info(f'saved the data to {Path(REPORTS_DIRECTORY) / name}')
         except Exception:
             pass
 
