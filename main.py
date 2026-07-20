@@ -29,7 +29,13 @@ class Main(FileSystemEventHandler):
             name = f'{name}.docx'
 
         try:
-            report = Document(Path(REPORTS_DIRECTORY) / name)
+            report = None
+            report_path = None
+
+            for index in Path(REPORTS_DIRECTORY).rglob('*.docx'):
+                if name == index.name:
+                    report_path = index.resolve()
+                    report = Document(report_path)
 
             for table in report.tables:
                 for row in table.rows:
@@ -42,10 +48,10 @@ class Main(FileSystemEventHandler):
                             elif '+' in text:
                                 paragraph.text = ''
 
-            report.save(Path(REPORTS_DIRECTORY) / name)
-            logging.info(f'saved the data to {Path(REPORTS_DIRECTORY) / name}')
-        except Exception:
-            pass
+            report.save(report_path)
+            logging.info(f'saved the data to {report_path}')
+        except Exception as exception:
+            print(exception)
 
     def _processing(self, data):    
         key_map = {
