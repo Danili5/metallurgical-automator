@@ -53,7 +53,7 @@ class Main(FileSystemEventHandler):
                                 paragraph.text = ''            
 
             report.save(report_path)
-            logging.info(f'saved the data to {report_path}')
+            logging.info(f'saved the data to {report_path}.')
         except Exception as exception:
             print(exception)
 
