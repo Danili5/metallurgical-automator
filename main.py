@@ -45,8 +45,12 @@ class Main(FileSystemEventHandler):
 
                             if text in processed_data:
                                 paragraph.text = str(processed_data[text])
+                                
+                                for run in paragraph.runs:
+                                    run.font.name = 'Bookman Old Style'
+                                    run.font.size = Pt(11)
                             elif '+' in text:
-                                paragraph.text = ''
+                                paragraph.text = ''            
 
             report.save(report_path)
             logging.info(f'saved the data to {report_path}')
