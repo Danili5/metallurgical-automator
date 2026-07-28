@@ -47,7 +47,7 @@ class Main(FileSystemEventHandler):
                                 paragraph.text = str(processed_data[text])
                                 
                                 for run in paragraph.runs:
-                                    run.font.name = 'Bookman Old Style'
+                                    run.font.name = FONT
                                     run.font.size = Pt(11)
                             elif '+' in text:
                                 paragraph.text = ''            
@@ -111,6 +111,7 @@ if __name__ == "__main__":
     load_dotenv()
     DATA_DIRECTORY = os.getenv("DATA_DIRECTORY")
     REPORTS_DIRECTORY = os.getenv("REPORTS_DIRECTORY")
+    FONT = os.getenv("FONT")
         
     observer = Observer()
     observer.schedule(Main(), DATA_DIRECTORY, recursive = True)
