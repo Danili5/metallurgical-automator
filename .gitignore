@@ -1,4 +1,9 @@
 .env
+run_hidden.vbs
+build/
+dist/
+main.spec
 reports/
 data/
 venv/
+build/main

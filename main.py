@@ -64,6 +64,8 @@ class Main(FileSystemEventHandler):
             'Force at Yield (Offset 0.2 %)': '+YIELD',
             'Tensile stress at Yield (Offset 0.2 %)': '+S2',
             'Tensile stress at Maximum Force': '+S1',
+            'Maximum Tensile stress': '+S1',
+            'Force at Maximum Tensile stress': '+ULT',
             'Maximum Force': '+ULT',
             'Elongation after fracture': '+E',
             'Reduction of area at Area reduction': '+RA'
@@ -87,9 +89,14 @@ class Main(FileSystemEventHandler):
                             sub_value = round(sub_value/1000) * 1000
 
                         processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
-
                     elif key in ['+E', '+RA']:
-                        processed_data[f'{key}{sub_key}+'] = round(sub_value)
+                        sub_value = round(sub_value)
+
+                        processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
+                    elif key in '+AREA':
+                        sub_value = round(sub_value, 3)
+                        
+                        processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
                     else:
                         processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
 
