@@ -94,7 +94,7 @@ class Main(FileSystemEventHandler):
                         processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
                     else:
                         processed_data[f'{key}{sub_key}+'] = f'{sub_value:,}'
-
+                        
         return processed_data
 
     def _is_file_loaded(self, data_file, max_attemps = 20):
@@ -107,6 +107,7 @@ class Main(FileSystemEventHandler):
             except (PermissionError, FileNotFoundError, IOError):
                 attempts += 1
                 time.sleep(0.5)
+
         return False
 
 if __name__ == "__main__":  
@@ -117,7 +118,7 @@ if __name__ == "__main__":
     FONT = "Bookman Old Style"
         
     observer = Observer()
-    observer.schedule(Main(), DATA_DIRECTORY, recursive = True)
+    observer.schedule(Main(), DATA_DIRECTORY)
     observer.start()
 
     logging.info(f"observation has begun")
