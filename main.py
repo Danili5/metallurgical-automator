@@ -1,16 +1,11 @@
-import os
-import sys
 import time
 import logging
 import pandas as pd
 from pathlib import Path
 from docx import Document
 from docx.shared import Pt
-from dotenv import load_dotenv
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
-logging.basicConfig(level=logging.INFO, format="> %(message)s at %(asctime)s.", datefmt="%H:%M:%S")
 
 class Main(FileSystemEventHandler):
     def on_created(self, event): 
@@ -114,11 +109,12 @@ class Main(FileSystemEventHandler):
                 time.sleep(0.5)
         return False
 
-if __name__ == "__main__":    
-    load_dotenv()
-    DATA_DIRECTORY = os.getenv("DATA_DIRECTORY")
-    REPORTS_DIRECTORY = os.getenv("REPORTS_DIRECTORY")
-    FONT = os.getenv("FONT")
+if __name__ == "__main__":  
+    logging.basicConfig(level=logging.INFO, format="> %(message)s at %(asctime)s.", datefmt="%H:%M:%S")
+
+    DATA_DIRECTORY = r"M:\!Travelers and Reports\MMT - Massachusetts Materials Technologies\2022\CN0622053"
+    REPORTS_DIRECTORY = Path.home() / 'Hurst Metallurgical Laboratory'
+    FONT = "Bookman Old Style"
         
     observer = Observer()
     observer.schedule(Main(), DATA_DIRECTORY, recursive = True)
