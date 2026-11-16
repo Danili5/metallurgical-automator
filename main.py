@@ -113,7 +113,8 @@ class Main(FileSystemEventHandler):
 if __name__ == "__main__":  
     logging.basicConfig(level=logging.INFO, format="> %(message)s at %(asctime)s.", datefmt="%H:%M:%S")
 
-    DATA_DIRECTORY = r"M:\Data"
+    DATA_DIRECTORY = r"C:\Data"
+
     REPORTS_DIRECTORY = Path.home() / 'Hurst Metallurgical Laboratory'
     FONT = "Bookman Old Style"
         
